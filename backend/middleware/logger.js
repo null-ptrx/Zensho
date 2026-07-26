@@ -11,5 +11,4 @@ export const logger = async (req, res, next) => {
     const date = new Date().toISOString();
     await fs.appendFile(finalPath, `${date} ${req.method} ${req.url}\n`)
     next();
-
 }

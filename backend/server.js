@@ -1,76 +1,62 @@
 import 'dotenv/config'
 import express from 'express';
 import { logger } from './middleware/logger.js'
+import { connectDb } from './config/db.js';
+import { Note } from './models/Note.js';
 const app = express();
 app.use(express.json())
 app.use(logger);
 
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    age: 24,
-    city: "New York",
-    isActive: true,
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    age: 29,
-    city: "Los Angeles",
-    isActive: false,
-  },
-  {
-    id: 3,
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    age: 22,
-    city: "Chicago",
-    isActive: true,
-  },
-
-];
 app.get('/', (req, res) => {
   res.send(`dhami`);
 });
 
-app.get('/api/notes', (req, res) => {
-  res.json(users);
+app.get('/api/notes', async (req, res) => {
+  let notes = await Note.find();
+  res.json(notes);
 });
 
-app.post('/api/notes', (req, res) => {
-  const newUser = {
-    id: users.length + 1,
+app.post('/api/notes', async (req, res) => {
+  const newNote = await Note.create({
     name: req.body.name,
     email: req.body.email,
     age: req.body.age,
     city: req.body.city,
     isActive: req.body.isActive
-};
-users.push(newUser);
-res.status(201).json(newUser)
+  });
+  res.status(201).json(newNote)
 });
 
-app.put('/api/notes/:id', (req, res) => {
+app.put('/api/notes/:id', async (req, res) => {
   let updatedData = req.body;
-  let index = users.findIndex((index) => index.id === Number(req.params.id));
-  if (index === -1) {
-    return res.status(404).json({error: "user not found"})
+  let id = req.params.id;
+  let updatedDoc = await Note.findByIdAndUpdate(id, updatedData, { new: true });
+  if (!updatedDoc) {
+    return res.status(404).json({ error: "Note not found" });
   }
-  users[index] = {...users[index], ...updatedData};
-  res.json(users[index])
+  res.json(updatedDoc);
 });
 
-app.delete('/api/notes/:id', (req, res) => {
-  let index = users.findIndex((user) => user.id === Number(req.params.id));
-  if (index === -1) {
-    return res.status(404).json({error: "user not found"})
-  } 
-  users.splice(index, 1);
-  res.status(201).json({message : "user deleted"});
+app.delete('/api/notes/:id', async (req, res) => {
+  let id = req.params.id;
+  let deletedDoc = await Note.findByIdAndDelete(id);
+  if (!deletedDoc) {
+    return res.status(404).json({ error: "Note not found" });
+  }
+  res.json(deletedDoc);
 });
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Example app listening on port http://${process.env.URL}:${process.env.PORT}`);
-});
+
+const startServer = async () => {
+  try {
+    await connectDb();
+    console.log('db connected');
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`Example app listening on port http://${process.env.URL}:${process.env.PORT}`);
+    });
+  } catch (err) {
+    console.log("failed to connect database");
+    throw err; // ← re-throw so the caller knows it failed
+
+  }
+}
+startServer();
