@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin panel</title>
+</head>
+
+<body>
+    <%- include('navbar'); %>
+        <h1>Users</h1>
+        <div>
+            <% let users=1;%>
+                <% notes.forEach((item) => {%>
+                    <h1>user <%=users%>
+                    </h1>
+                    <li>name : <%= item.name%>
+                    </li>
+                    <li>email : <%= item.email%>
+                    </li>
+                    <li>age : <%= item.age%>
+                    </li>
+                    <li>city : <%= item.age%>
+                    </li>
+                    <li>status : <%= item.isActive%>
+                    </li>
+                    <%users++%>
+                        <% });%>
+        </div>
+        <script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>

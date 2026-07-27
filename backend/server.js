@@ -3,12 +3,15 @@ import express from 'express';
 import { logger } from './middleware/logger.js'
 import { connectDb } from './config/db.js';
 import { Note } from './models/Note.js';
+
 const app = express();
+app.set('view engine', 'ejs');
 app.use(express.json())
 app.use(logger);
 
-app.get('/', (req, res) => {
-  res.send(`dhami`);
+app.get('/admin', async (req, res) => {
+  let notes = await Note.find();
+  res.render(`admin.ejs`, {notes});
 });
 
 app.get('/api/notes', async (req, res) => {
