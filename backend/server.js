@@ -3,11 +3,14 @@ import express from 'express';
 import { logger } from './middleware/logger.js'
 import { connectDb } from './config/db.js';
 import { Note } from './models/Note.js';
+import cors from 'cors'
 
 const app = express();
+app.use(cors());
 app.set('view engine', 'ejs');
 app.use(express.json())
 app.use(logger);
+
 
 app.get('/admin', async (req, res) => {
   let notes = await Note.find();
