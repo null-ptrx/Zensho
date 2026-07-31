@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { useState, useEffect, useRef } from 'react'
 import UserCard from './components/UserCard'
+import About from './pages/About'
+import { Routes, Route } from 'react-router-dom'
 const App = () => {
     const [notes, setNotes] = useState([]);
     const focusRef = useRef(null);
