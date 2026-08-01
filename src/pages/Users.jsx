@@ -1,8 +1,8 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import UserCard from '../components/UserCard'
-const Users = () => {
-        const [notes, setNotes] = useState([]);
+const Users = ({nandleSubmit}) => {
+    const [notes, setNotes] = useState([]);
     const fetchNotes = async () => {
         let res = await fetch('http://localhost:3000/api/notes')
         let data = await res.json();
@@ -10,7 +10,15 @@ const Users = () => {
     }
     useEffect(() => {
         fetchNotes();
-    }, [])
+    }, []);
+    const handleDelete = async (_id) => {
+        await fetch(`http://localhost:3000/api/notes/${_id}`, {method: 'DELETE'});
+        fetchNotes();
+    };
+    const handleEdit = async (_id) => {
+        let data = await fetch(`http://localhost:3000/api/notes/${_id}`, { method: 'PUT' });
+        setForm(data);
+    };
     return (
         <div className='flex gap-5 bg-black h-[92vh] text-white p-10'>
             <div className='p-5 w-[40vw]'>
@@ -18,7 +26,7 @@ const Users = () => {
                 <div className='overflow-y-scroll h-[70vh] mt-10 flex flex-col border bg-black'>
                     {notes.length === 0 ? <div>no user to show</div> :
                         notes.map((item) => {
-                            return (<UserCard key={item._id} notes={item} />)
+                            return (<UserCard key={item._id} notes={item} handleEdit={handleEdit} handleDelete={handleDelete} />)
                         })
                     }
                 </div>
