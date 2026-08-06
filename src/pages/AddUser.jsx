@@ -30,11 +30,14 @@ const AddUser = () => {
             isActive: false,
         })
     }
+    const realHandleEdit = async (editUser) => {
+        setForm(editUser);
+    };
        useEffect(() => {
             focusInput();
         }, [])
   return (
-        <div className='p-5 w-[50vw]'>
+      <div className='flex gap-5 bg-black h-[92vh] text-white p-10 items-center flex-col'>
             <h1 className='text-3xl'>Add new user</h1>
             <form onSubmit={(e) => {
                 e.preventDefault();
